@@ -43,7 +43,7 @@ function InitHashKeys() {
     }
 }
 
-fuction InitSq120To64(){
+function InitSq120To64(){
     var index = 0;
     var file = FILES.FILE_A;
     var rank = RANKS.RANK_1;

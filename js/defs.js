@@ -50,6 +50,13 @@ var SQUARES = {A1:21, B1:22, C1:23, D1:24, E1:25, F1:26, G1:27, H1:28,  // Detta
 
 
 
+// Max antal ___ definitioner
+var MAXGAMEMOVES = 2048;    // Här säger jag åt programmet att det kan inte vara fler än 2048 drag per match. Enligt wikipedia så var det längsta officiella spelet 269 drag så 2048 är mer än nog
+var MAXPOSITIONMOVES = 256; // Här säger jag åt programmet att det kan inte finnas fler än 256 olika drag man kan göra för varje position
+var MAXDEPTH = 64;          // Här säger jag åt programmet att det ändast är 64 rutor som den ska analyzera för framtida drag
+
+
+
 //
 var FilesBrd = new Array(BRD_SQ_NUM);
 var RanksBrd = new Array(BRD_SQ_NUM);
