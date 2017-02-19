@@ -19,6 +19,37 @@ GameBoard.moveList = new Array(MAXDEPTH * MAXPOSITIONMOVES);    // Alla drag som
 GameBoard.moveScores = new Array(MAXDEPTH * MAXPOSITIONMOVES);  // Alla drag har får ett antal poäng
 GameBoard.moveListStart = new Array(MAXDEPTH);                  // Var moveList kommer att börja
 
+function PrintBoard(){
+    var sq, file,rank, piece;
+    console.log("\nGame Board:\n");
+    
+    for(rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--){
+        var line = (RankChar[rank] + "  ");
+        for(file = FILES.FILE_A; file <= FILES.FILE_H; file++){
+            sq = FR2SQ(file,rank);
+            piece = GameBoard.pieces[sq];
+            line += (" " + PceChar[piece] + " ");
+        }
+        console.log(line);
+    }
+    console.log("");
+    var line = "   ";
+    for(file = FILES.FILE_A; file <= FILES.FILE_H; file++){
+        line += (" " + FileChar[file] + " ");
+    }
+    console.log(line);
+    console.log("side:" + SideChar[GameBoard.side]);
+    console.log("enPas:" + GameBoard.enPas);
+    line = "";
+    
+    if(GameBoard.castlePerm & CASTLEBIT.WKCA) line += "K";
+    if(GameBoard.castlePerm & CASTLEBIT.WQCA) line += "Q";
+    if(GameBoard.castlePerm & CASTLEBIT.BKCA) line += "k";
+    if(GameBoard.castlePerm & CASTLEBIT.BQCA) line += "q";
+    console.log("castle:" + line);
+    console.log("key:" + GameBoard.posKey.toString(16));
+}
+
 function GeneratePosKey(){
     var sq = 0;
     var finalKey = 0;
@@ -93,9 +124,11 @@ function ParseFen(fen){
     var sq120 = 0;
     var fenCount = 0;
     
+    // Denna loop går genom alla tecken i en fen string. När den hittar ett tecken kommer den antingen att plasera en pjäs i en ruta eller hoppa över ett antal rutor
     while((rank >= RANKS.RANK_1) && fenCount < fen.length){
         count = 1;
         switch(fen[fenCount]){
+            // Hittar den en bokstav så kommer den att plasera en pjäs
             case 'p': piece = PIECES.bP; break;
             case 'r': piece = PIECES.bR; break;
             case 'n': piece = PIECES.bN; break;
@@ -108,7 +141,7 @@ function ParseFen(fen){
             case 'B': piece = PIECES.wB; break;
             case 'K': piece = PIECES.wK; break;
             case 'Q': piece = PIECES.wQ; break;
-
+            //Hittar den ett nummer så kommer den att hoppa över ett antal rutor
             case '1':
             case '2':
             case '3':
@@ -117,18 +150,18 @@ function ParseFen(fen){
             case '6':
             case '7':
             case '8':
-                piece = PIECES.EMPTY;
-                count = fen[fenCount].charCodeAt() - '0'.charCodeAt();
-                break;
-                case '/':
-            case ' ':
-                rank--;
-                file = FILES.FILE_A;
-                fenCount++;
-                continue;  
+            piece = PIECES.EMPTY;
+            count = fen[fenCount].charCodeAt() - '0'.charCodeAt();
+            break;
+            case '/':   // Ett snedstreck betyer att raden med rutor är slut och att loopen ska börja på nästa rad
+            case ' ':   // Hittar den ett mellanslag så betyder det att en anna del i fen stringen börjar
+            rank--;
+            file = FILES.FILE_A;
+            fenCount++;
+            continue;  
             default:
-                console.log("FEN error");
-                return;
+            console.log("FEN error");
+            return;
         }
         
         for(i=0; i<count; i++) {	
@@ -144,24 +177,24 @@ function ParseFen(fen){
     fenCount += 2;
     
     for (i = 0; i < 4; i++) {
-        if (fen[fenCountnt] == ' ') {
+        if (fen[fenCount] == ' ') {
             break;
         }		
-		switch(fen[fenCountnt]) {
+		switch(fen[fenCount]) {
 			case 'K': GameBoard.castlePerm |= CASTLEBIT.WKCA; break;
 			case 'Q': GameBoard.castlePerm |= CASTLEBIT.WQCA; break;
 			case 'k': GameBoard.castlePerm |= CASTLEBIT.BKCA; break;
 			case 'q': GameBoard.castlePerm |= CASTLEBIT.BQCA; break;
 			default:	     break;
         }
-		fenCountnt++;
+		fenCount++;
 	}
-	fenCountnt++;	
+	fenCount++;	
 	
-	if (fen[fenCountnt] != '-') {        
-		file = fen[fenCountnt].charCodeAt() - 'a'.charCodeAt();
-		rank = fen[fenCountnt + 1].charCodeAt() - '1'.charCodeAt();	
-		console.log("fen[fenCount]:" + fen[fenCountnt] + " File:" + file + " Rank:" + rank);	
+	if (fen[fenCount] != '-') {        
+		file = fen[fenCount].charCodeAt() - 'a'.charCodeAt();
+		rank = fen[fenCount + 1].charCodeAt() - '1'.charCodeAt();	
+		console.log("fen[fenCount]:" + fen[fenCount] + " File:" + file + " Rank:" + rank);	
 		GameBoard.enPas = FR2SQ(file,rank);		
     }
 	

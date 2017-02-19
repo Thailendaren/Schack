@@ -61,6 +61,20 @@ var MAXDEPTH = 64;          // Här säger jag åt programmet att det ändast ä
 var FilesBrd = new Array(BRD_SQ_NUM);
 var RanksBrd = new Array(BRD_SQ_NUM);
 
+
+
+// Detta är startpositionen på ett vanligt schackbräde
+var START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+
+// Dessa variabler kommer göra det lättare att skriva ut rutor och planer i framtiden
+var PceChar = ".PNBRQKpnbrqk";  // PceChar = PieceCharacters. Alltså alla pjäser som finns
+var SideChar = "wb-";           // SideChar = SideCharacters. Alltså de sidor som finns, vitt, svart och null
+var RankChar = "12345678";      // RankChar = RankCharacters. Alltså de rader som finns
+var FileChar = "abcdefgh";      // FileChar = FileCharacters. Alltså de kolumner som finns
+
+
+
 function FR2SQ(f,r) {
  	return ( (21 + (f) ) + ( (r) * 10 ) );
 }
