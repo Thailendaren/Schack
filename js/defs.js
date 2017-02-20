@@ -92,6 +92,12 @@ var PieceRookQueen = [false, false, false, false, true, true, false, false, fals
 var PieceBishopQueen = [false, false, false, true, false, true, false, false, false, true, false, true, false];
 var PieceSlides = [false, false, false, true, true, true, false, false, false, true, true, true, false];
 
+// Följande 4 rader bestämmer varifrån olika pjäser kan attackera från
+var KnDir = [-8, -19, -21, -12, 8, 19, 21, 12];
+var RkDir = [-1, -10, 1, 10];
+var BiDir = [-9, -11, 11, 9];
+var KiDir = [-1, -10, 1, 10, -9, -11, 11, 9];
+
 var PieceKeys = new Array(14 * 120);
 var SideKey;
 var CastleKeys = new Array(16);
@@ -111,3 +117,21 @@ function SQ64(sq120){
 function SQ120(sq64){
     return Sq64ToSq120[(sq64)];
 }
+
+function PCEINDEX(pce, pceNum){
+    return(pce * 10 * pceNum);
+}
+
+function  FROMSQ(m){return(m & 0x7F;)}
+function  TOSQ(m){return((m >> 7) & 0x7F;)}
+function  CAPTURED(m){return((m >> 14) & 0xF;)}
+function  Promoted(m){return((m >> 20) & 0xF;)}
+
+var MFLAGEP = 0x40000;      // Move FLAG En Passant
+var MFLAGPS = 0x80000;      // Move FLAG Pawn Start
+var MFLAGCA = 0x1000000;    // Move FLAG CAstling
+
+var MFLAGCAP = 0x7C000;     // Move FLAG CAPture
+var MFLAGPROM = 0xF00000;   // Move FLAG PROMotion
+
+var NOMOVE = 0;

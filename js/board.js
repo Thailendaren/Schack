@@ -76,17 +76,24 @@ function GeneratePosKey(){
 }
 
 
-
-// Denna funktion tömmer spelplanen
-function ResetBoard(){
-    var i = 0;
-    for(i = 0; i <BRD_SQ_NUM; i++){                 // Denna loop gör så att alla rutor blir rutor utanför spelplanen
-        GameBoard.pieces[i] = SQUARES.OFFBOARD;
-    }
+// Denna function skriver ut alla pjäser som den hittar i UpdateListsMaterial() i konsolen
+function PrintPieceLists(){
+    var piece, pceNum;
     
-    for(i = 0; i < 64; i++){                        // Denna loop gör så att alla rutor som ska vara del av spelplanen blir det
-        GameBoard.pieces[SQ120(i)] = PIECES.EMPTY;
+    for(piece = PIECES.wP; piece <= PIECES.bK; piece++){
+        for(pceNum = 0; pceNum < GameBoard.pceNum[piece]; pceNum++){
+            console.log("Piece " + PceChar[piece] + " on " + PrSq(GameBoard.pList[PCEINDEX(piece, pceNum)]));
+        }
     }
+}
+
+
+
+
+// Programmet letar efter alla pjäser och deras värden
+// De tre första for-looparna är tagna från ResetBoard() och inklistrade här istället för performance reasons
+function UpdateListsMaterial(){
+    var piece, sq, i, colour;
     
     for(i = 0; i < 14*120; i++){                    // Denna loop gör så att alla rutor är tomma
         GameBoard.pList[i] = PIECES.EMPTY;
@@ -98,6 +105,32 @@ function ResetBoard(){
     
     for(i=0; i<13; i++){            // Denna loop gör så att vi har 0 antal pjäser på planen
         GameBoard.pceNum[i] = 0;
+    }
+    
+    for(i = 0; i < 64; i++){
+        sq = SQ120(i);
+        piece = GameBoard.pieces[sq];
+        if(piece != PIECES.EMPTY){
+            colour = PieceCol[piece];
+            GameBoard.material[colour] += PieceVal[piece];
+            GameBoard.pList[PCEINDEX(piece, GameBoard.pceNum[piece])] = sq;
+            GameBoard.pceNum[piece]++;
+        }
+    }
+    PrintPieceLists();
+}
+
+
+
+// Denna funktion tömmer spelplanen
+function ResetBoard(){
+    var i = 0;
+    for(i = 0; i <BRD_SQ_NUM; i++){                 // Denna loop gör så att alla rutor blir rutor utanför spelplanen
+        GameBoard.pieces[i] = SQUARES.OFFBOARD;
+    }
+    
+    for(i = 0; i < 64; i++){                        // Denna loop gör så att alla rutor som ska vara del av spelplanen blir det
+        GameBoard.pieces[SQ120(i)] = PIECES.EMPTY;
     }
     
     GameBoard.side = COLOURS.BOTH;      // Detta gör så att sidorna inte har en bestämd färg
@@ -199,4 +232,103 @@ function ParseFen(fen){
     }
 	
 	GameBoard.posKey = GeneratePosKey();
+    UpdateListsMaterial();
+    //SqAttacked();
+    PrintSqAttacked();
+}
+
+
+
+function PrintSqAttacked(){
+    var sq, file, rank, piece;
+    console.log("\nAttacked:\n")
+    
+    for(rank = RANKS.RANK_8; rank >= RANKS.RANK_1; rank--){
+        var line = ((rank + 1) + "  ");
+        for(file = FILES.FILE_A; file <= FILES.FILE_H; file++){
+            sq = FR2SQ(file, rank);
+            if(SqAttacked(sq, GameBoard.side) == true){
+                piece = "X";
+            }
+            else{
+                piece = "-";
+            }
+            line += (" " + piece + " ");
+        }
+        console.log(line);
+    }
+    console.log("");
+}
+
+
+
+// Denna funktion kollar om en ruta blir attackerad eller inte
+function SqAttacked(sq, side){
+    var pce;
+    var t_sq;
+    var i;
+    
+    // Här söker den efter om några bönder attackerar
+    if(side == COLOURS.WHITE){
+        if(GameBoard.pieces[sq - 11] == PIECES.wP || GameBoard.pieces[sq - 9] == PIECES.wP){
+            return true;
+        }
+    }
+    else{
+        if(GameBoard.pieces[sq + 11] == PIECES.bP || GameBoard.pieces[sq + 9] == PIECES.bP){
+            return true;
+        }
+    }
+    
+    // Här söker den efter om några hästar attackerar
+    for(i = 0; i < 8; i++) {
+		pce = GameBoard.pieces[sq + KnDir[i]];
+		if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKnight[pce] == true){
+			return true;
+		}
+	}
+    
+    // Här söker den efter om några torn attackerar
+    for(i = 0; i < 4; i++){
+        dir = RkDir[i];
+        t_sq = sq + dir;
+        pce = GameBoard.pieces[t_sq]
+        while(pce != SQUARES.OFFBOARD){
+            if(pce != PIECES.EMPTY){
+                if(PieceRookQueen[pce] == true && PieceCol[pce] == side){
+                    return true;
+                }
+                break;
+            }
+            t_sq += dir;
+            pce = GameBoard.pieces[t_sq];
+        }
+    }
+    
+    // Här söker den efter om några präster attackerar
+    for(i = 0; i < 4; i++){
+        dir = BiDir[i];
+        t_sq = sq + dir;
+        pce = GameBoard.pieces[t_sq]
+        while(pce != SQUARES.OFFBOARD){
+            if(pce != PIECES.EMPTY){
+                if(PieceBishopQueen[pce] == true && PieceCol[pce] == side){
+                    return true;
+                }
+                break;
+            }
+            t_sq += dir;
+            pce = GameBoard.pieces[t_sq];
+        }
+    }
+    
+    // Här söker den efter om några kungar attackerar
+    for(i = 0; i < 8; i++){
+        pce = GameBoard.pieces[sq + KiDir[i]];
+        if(pce != SQUARES.OFFBOARD && PieceCol[pce] == side && PieceKing[pce] == true){
+            return true;
+        }
+    }
+    // Hittar programmet inga pjäser som attackerar så kommer funktionen att returnera false
+    return false;
 }
