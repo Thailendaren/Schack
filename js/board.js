@@ -8,7 +8,7 @@ GameBoard.pieces = new Array(BRD_SQ_NUM);
 GameBoard.side = COLOURS.WHITE;
 GameBoard.fiftyMove = 0;
 GameBoard.hisPly = 0;
-GameBoard.ply = 0;
+GameBoard.ply = 0;              // Ply är antalet drag som hittas i sökträdet
 GameBoard.enPas = 0;
 GameBoard.castlePerm = 0;
 GameBoard.material = new Array(2);
@@ -305,7 +305,7 @@ function SqAttacked(sq, side){
         }
     }
     
-    // Här söker den efter om några präster attackerar
+    // Här söker den efter om några löpare attackerar
     for(i = 0; i < 4; i++){
         dir = BiDir[i];
         t_sq = sq + dir;
