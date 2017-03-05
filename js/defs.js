@@ -129,10 +129,28 @@ function PCEINDEX(pce, pceNum){
     return(pce * 10 * pceNum);
 }
 
+var Kings = [PIECES.wK, PIECES.bK];
+// Här är en spelplan där vi kan se att alla rutor utom 6 har värdet 15
+// Detta är för att på dessa rutor är startrutorna för båda kungar samt för alla fyra torn
+var CastlePerm = [
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 13, 15, 15, 15, 12, 15, 15, 14, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15,  7, 15, 15, 15,  3, 15, 15, 11, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 
+    15, 15, 15, 15, 15, 15, 15, 15, 15, 15
+]
+
 function  FROMSQ(m){return(m & 0x7F);}
 function  TOSQ(m){return((m >> 7) & 0x7F);}
 function  CAPTURED(m){return((m >> 14) & 0xF);}
-function  Promoted(m){return((m >> 20) & 0xF);}
+function  PROMOTED(m){return((m >> 20) & 0xF);}
 
 var MFLAGEP = 0x40000;      // Move FLAG En Passant
 var MFLAGPS = 0x80000;      // Move FLAG Pawn Start
@@ -149,4 +167,24 @@ function SQOFFBOARD(sq){
     }
     
     return false;
+}
+
+
+// Hashing
+// Hasing
+// Hashing
+function HashPiece(pce, sq){
+    GameBoard.posKey ^= PieceKeys[(pce * 120) + sq];
+}
+
+function HashCastle(){
+    GameBoard.posKey ^= CastleKeys[GameBoard.castlePerm];
+}
+
+function HashSide(){
+    GameBoard.posKey ^= SideKey;
+}
+
+function HashEnPas(){
+    GameBoard.posKey ^= GameBoard.enPas;
 }
