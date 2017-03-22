@@ -66,10 +66,12 @@ function InitSq120To64(){
 }
 
 function InitBoardVars(){
-    var i;
-    
+    var i = 0;
     for(i = 0; i < MAXGAMEMOVES; i++){
         GameBoard.history.push({move : NOMOVE, castlePerm : 0, enPas : 0, fiftyMove : 0, posKey : 0});
+    }
+    for(i = 0; i < PVENTRIES; i++){
+        GameBoard.PvTable.push({move : NOMOVE, posKey : 0});
     }
 }
 

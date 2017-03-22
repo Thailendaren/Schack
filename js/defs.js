@@ -54,7 +54,9 @@ var SQUARES = {A1:21, B1:22, C1:23, D1:24, E1:25, F1:26, G1:27, H1:28,  // Detta
 var MAXGAMEMOVES = 2048;    // Här säger jag åt programmet att det kan inte vara fler än 2048 drag per match. Enligt wikipedia så var det längsta officiella spelet 269 drag så 2048 är mer än nog
 var MAXPOSITIONMOVES = 256; // Här säger jag åt programmet att det kan inte finnas fler än 256 olika drag man kan göra för varje position
 var MAXDEPTH = 64;          // Här säger jag åt programmet att det ändast är 64 rutor som den ska analyzera för framtida drag
-
+var INF = 30000;
+var MATE = 29000;
+var PVENTRIES = 10000;
 
 
 //
@@ -117,6 +119,17 @@ function RAND_32() {
 	return (Math.floor((Math.random()*255)+1) << 23) | (Math.floor((Math.random()*255)+1) << 16) | (Math.floor((Math.random()*255)+1) << 8) | Math.floor((Math.random()*255)+1);
 }
 
+var Mirror64 = [
+56	,	57	,	58	,	59	,	60	,	61	,	62	,	63	,
+48	,	49	,	50	,	51	,	52	,	53	,	54	,	55	,
+40	,	41	,	42	,	43	,	44	,	45	,	46	,	47	,
+32	,	33	,	34	,	35	,	36	,	37	,	38	,	39	,
+24	,	25	,	26	,	27	,	28	,	29	,	30	,	31	,
+16	,	17	,	18	,	19	,	20	,	21	,	22	,	23	,
+8	,	9	,	10	,	11	,	12	,	13	,	14	,	15	,
+0	,	1	,	2	,	3	,	4	,	5	,	6	,	7
+];
+
 function SQ64(sq120){
     return Sq120ToSq64[(sq120)];
 }
@@ -127,6 +140,10 @@ function SQ120(sq64){
 
 function PCEINDEX(pce, pceNum){
     return(pce * 10 * pceNum);
+}
+
+function MIRROR64(sq){
+    return Mirror64[sq];
 }
 
 var Kings = [PIECES.wK, PIECES.bK];

@@ -19,6 +19,10 @@ GameBoard.posKey = 0;
 GameBoard.moveList = new Array(MAXDEPTH * MAXPOSITIONMOVES);    // Alla drag som går att göra
 GameBoard.moveScores = new Array(MAXDEPTH * MAXPOSITIONMOVES);  // Alla drag har får ett antal poäng
 GameBoard.moveListStart = new Array(MAXDEPTH);                  // Var moveList kommer att börja
+GameBoard.PvTable = [];
+GameBoard.PvArray = new Array(MAXDEPTH);
+GameBoard.searchHistory = new Array( 14 * BRD_SQ_NUM);
+GameBoard.searchKillers = new Array(3 x MAXDEPTH);
 
 function CheckBoard(){
     var t_pceNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
